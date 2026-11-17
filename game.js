@@ -134,6 +134,7 @@ const DB_SECRET_REALMS = Array.from({ length: 130 }, (_, i) => {
 // ================= PLAYER STATE =================
 let state = {
   loggedIn: false,
+  role: 'player',
   name: "Hàn Lập",
   realmIdx: 0,
   exp: 0,
@@ -231,6 +232,7 @@ async function handleAuth() {
     if (!response.ok) throw new Error(result.error || 'Không thể xác thực tài khoản.');
 
     state.name = result.username;
+    state.role = result.role || 'player';
     state.loggedIn = true;
 
     // Mỗi tài khoản tải dữ liệu nhân vật riêng từ máy chủ.
@@ -240,8 +242,15 @@ async function handleAuth() {
       if (saved.state && typeof saved.state === 'object') {
         Object.assign(state, saved.state);
         state.name = result.username;
+        state.role = result.role || 'player';
         state.loggedIn = true;
       }
+    }
+
+    // Chỉ hiển thị nút ADMIN TỐI CAO nếu tài khoản có quyền admin
+    const adminBtn = document.getElementById('btnAdminPanel');
+    if (adminBtn) {
+      adminBtn.style.display = state.role === 'admin' ? 'inline-block' : 'none';
     }
 
     document.getElementById('loginModal').style.display = 'none';
@@ -1288,9 +1297,22 @@ function interactNpc(idx, act) {
 }
 
 // ================= SUPER ADMIN PANEL (5 FULL TABS) =================
-function openAdmin() {
-  document.getElementById('adminModal').style.display = 'flex';
-  renderAdminTab('res', document.querySelector('#adminNav button'));
+async function openAdmin() {
+  if (state.role !== 'admin') {
+    addChat("Hệ Thống", "Bạn không có quyền truy cập trang Quản Trị!", "var(--red)");
+    return;
+  }
+  try {
+    const res = await fetch('/api/admin/me', { credentials: 'same-origin' });
+    if (!res.ok) {
+      addChat("Hệ Thống", "Xác thực quyền ADMIN thất bại!", "var(--red)");
+      return;
+    }
+    await saveGameToServer(true);
+    window.location.href = '/admin';
+  } catch (err) {
+    addChat("Hệ Thống", "Lỗi kết nối máy chủ khi mở trang Quản Trị.", "var(--red)");
+  }
 }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
