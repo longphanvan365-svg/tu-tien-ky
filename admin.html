@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tu Tiên Kỳ - Quản Trị</title><link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><div><div class="eyebrow">TU TIÊN KỲ · CONTROL PANEL</div><h1>Quản lý tài khoản</h1><p>Quản trị người chơi và dữ liệu nhân vật</p></div><div class="top-actions"><span id="adminName" class="admin-name">Đang kiểm tra quyền...</span><a href="/">Về game</a><button id="logoutBtn" class="muted">Đăng xuất</button></div></header>
+    <section id="denied" class="notice hidden"><h2>Không có quyền truy cập</h2><p>Bạn cần đăng nhập bằng tài khoản ADMIN để xem trang này.</p><a href="/">Quay lại game và đăng nhập ADMIN</a></section>
+    <section id="dashboard" class="hidden">
+      <div class="stats"><article><span>Tổng tài khoản</span><strong id="totalCount">0</strong></article><article><span>Đang hoạt động</span><strong id="activeCount">0</strong></article><article><span>Đang khóa</span><strong id="lockedCount">0</strong></article></div>
+      <div class="toolbar"><div><h2>Danh sách đạo hữu</h2><p id="updatedAt">Dữ liệu tài khoản trong máy chủ</p></div><div class="tools"><input id="searchInput" type="search" placeholder="Tìm theo ID hoặc đạo hiệu..."><button id="refreshBtn">Làm mới</button></div></div>
+      <div id="message" class="message hidden"></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>Tài khoản</th><th>Nhân vật</th><th>Tu vi (EXP)</th><th>Trạng thái</th><th>Ngày tạo</th><th>Đăng nhập gần nhất</th><th>Thao tác</th></tr></thead><tbody id="usersBody"><tr><td colspan="8">Đang tải...</td></tr></tbody></table></div>
+      <p class="footnote">Mật khẩu không được hiển thị. Khi đặt lại mật khẩu, hệ thống chỉ lưu bản mã hóa. Tài khoản ADMIN được bảo vệ khỏi thao tác khóa/xóa từ trang này.</p>
+    </section>
+  </main>
+  <script src="admin.js"></script>
+</body></html>

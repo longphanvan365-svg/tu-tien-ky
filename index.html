@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu Tiên Kỳ - Đại Đạo Vô Cực (Bản Tối Thượng v3)</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal">
+  <div class="login-box">
+    <h2>⚔️ TU TIÊN KỲ ⚔️</h2>
+    <div class="login-tabs">
+      <button class="active" onclick="switchAuthTab('login', this)">Đăng Nhập</button>
+      <button onclick="switchAuthTab('register', this)">Đăng Ký</button>
+      <button onclick="switchAuthTab('forgot', this)">Quên Mật Khẩu</button>
+    </div>
+    <div id="authForm">
+      <div class="form-group">
+        <label>Đạo Hiệu (Tài khoản)</label>
+        <input type="text" id="authUser" placeholder="Nhập đạo hiệu..." value="">
+      </div>
+      <div class="form-group" id="passGroup">
+        <label>Mật Khẩu</label>
+        <input type="password" id="authPass" placeholder="Nhập mật khẩu..." value="">
+      </div>
+      <div class="form-group" id="secGroup" style="display:none;">
+        <label>Mã Bảo Mật Khôi Phục</label>
+        <input type="text" id="authSec" placeholder="Nhập mã bí mật (VD: 8888)...">
+      </div>
+      <button class="btn-gold" style="width:100%; margin-top:8px;" onclick="handleAuth()">BƯỚC VÀO TIÊN ĐỒ</button>
+      <p id="authMsg" style="font-size:12px; color:var(--gold); text-align:center; margin-top:8px;"></p>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">🔥 TU TIÊN KỲ <span style="font-size:11px; color:var(--cyan); font-weight:normal;">Đại Đạo Vô Cực</span></div>
+  <div class="top-stats">
+    <div class="stat-pill">💎 Linh Thạch: <b id="uiStones" style="color:var(--cyan)">0</b></div>
+    <div class="stat-pill">🔄 Trùng Sinh: <b id="uiRebirth" style="color:var(--purple)">0</b></div>
+    <div class="stat-pill">⏱️ Online: <b id="uiPlayTime" style="color:var(--green)">00:00:00</b></div>
+  </div>
+  <div class="music-bar">
+    <span>🎵</span>
+    <select id="musicSelect" onchange="changeTrack(this.value)" style="max-width:135px; padding:3px;"></select>
+    <button onclick="togglePlay()" id="btnPlay">▶️</button>
+    <button onclick="nextTrack()">⏭️</button>
+    <label style="background:#263147; padding:4px 8px; border-radius:6px; cursor:pointer;" title="Chọn thư mục nhạc trên máy">
+      📁 Nhạc Máy <input type="file" id="localMusicInput" webkitdirectory directory multiple accept="audio/*" style="display:none" onchange="loadLocalMusic(event)">
+    </label>
+    <button class="btn-red" onclick="openAdmin()">⚙️ ADMIN TỐI CAO</button>
+  </div>
+</header>
+<audio id="bgAudio" onended="nextTrack()"></audio>
+
+<!-- MAIN 3-COLUMN LAYOUT -->
+<div class="main-grid">
+  <!-- LEFT PANEL: CHARACTER -->
+  <div class="panel">
+    <div class="panel-body">
+      <div class="char-header">
+        <div id="uiTitleBadges" style="font-size:11.5px; margin-bottom:2px; display:flex; gap:4px; justify-content:center; flex-wrap:wrap;">[Tán Tu Vô Danh]</div>
+        <h3 id="uiName" style="color:#fff;">Hàn Lập</h3>
+        <div class="realm-badge" id="uiRealm">Phàm Nhân</div>
+        <div style="font-size:11px; color:var(--muted); margin-top:4px;">Tông Môn: <span id="uiSect" style="color:var(--cyan)">Tán Tu</span></div>
+        <div style="font-size:11px; color:var(--gold); margin-top:2px;">Linh Căn: <b id="uiRootName">Ngũ Hành Tạp Linh Căn</b></div>
+      </div>
+
+      <div class="bar-wrap">
+        <div class="bar-label"><span>Sinh Lực (HP)</span><span id="uiHpText">100/100</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="uiHpBar" style="background:var(--red); width:100%;"></div></div>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-label"><span>Tu Vi (EXP)</span><span id="uiExpText">0/100</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="uiExpBar" style="background:var(--gold); width:0%;"></div></div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-item"><span>⚔️ Công:</span><b id="stAtk">10</b></div>
+        <div class="stat-item"><span>🛡️ Thủ:</span><b id="stDef">5</b></div>
+        <div class="stat-item"><span>⚡ Tốc:</span><b id="stSpd">10</b></div>
+        <div class="stat-item"><span>💥 Bạo:</span><b id="stCrit">5%</b></div>
+        <div class="stat-item"><span>🌿 Hệ Số LC:</span><b id="stRoot" style="color:var(--green)">x1.0</b></div>
+        <div class="stat-item"><span>🧠 Ngộ Tính:</span><b id="stInt" style="color:var(--cyan)">10</b></div>
+        <div class="stat-item"><span>🧘 Đạo Tâm:</span><b id="stDaoHeart" style="color:var(--purple)">Lv.1</b></div>
+        <div class="stat-item"><span>🌀 Tụ Linh:</span><b id="stArray" style="color:var(--gold)">Lv.1</b></div>
+        <div class="stat-item"><span>🔥 Hệ Số TS:</span><b id="stMult" style="color:var(--purple)">x1.0</b></div>
+        <div class="stat-item"><span>⚡ Tỷ Lệ Kiếp:</span><b id="stTrib" style="color:var(--gold)">100%</b></div>
+      </div>
+
+      <h4 style="font-size:12px; color:var(--gold); margin-top:10px;">Trang Bị Đang Mặc (Bấm tháo)</h4>
+      <div class="equip-slots" id="uiEquipSlots"></div>
+    </div>
+  </div>
+
+  <!-- CENTER PANEL: GAMEPLAY TABS -->
+  <div class="panel">
+    <div class="nav-tabs" id="mainNav">
+      <button class="active" onclick="switchTab('cultivate', this)">🧘 Động Phủ & Linh Căn</button>
+      <button onclick="switchTab('bag', this)">🎒 Túi Đồ</button>
+      <button onclick="switchTab('manuals', this)">📜 Công Pháp (800)</button>
+      <button onclick="switchTab('realms', this)">🌌 Bí Cảnh (130)</button>
+      <button onclick="switchTab('tower', this)">🗼 Tháp & PvP</button>
+      <button onclick="switchTab('sects', this)">🏯 Tông Môn (50)</button>
+      <button onclick="switchTab('shop', this)">🏪 Vạn Bảo Lâu</button>
+      <button onclick="switchTab('auction', this)">🔨 Đấu Giá Hội</button>
+      <button onclick="switchTab('disciples', this)">👥 Đồ Đệ & Tông Môn</button>
+      <button onclick="switchTab('titles', this)">👑 Danh Hiệu (500)</button>
+      <button onclick="switchTab('rank', this)">🏆 BXH</button>
+    </div>
+    <div class="panel-body" id="tabContent"></div>
+  </div>
+
+  <!-- RIGHT PANEL: WORLD CHAT & NPC -->
+  <div class="panel">
+    <div style="padding:9px; border-bottom:1px solid var(--border); font-weight:bold; font-size:12.5px; display:flex; justify-content:space-between;">
+      <span>💬 Kênh Thế Giới (Bấm tên NPC tương tác)</span>
+      <span style="font-size:11px; color:var(--green);">● 2,890</span>
+    </div>
+    <div class="chat-box" id="chatBox"></div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Nhập lời luận đạo..." onkeydown="if(event.key==='Enter') sendChat()">
+      <button class="btn-cyan" onclick="sendChat()">Gửi</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPER ADMIN MODAL -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="color:var(--red)">⚙️ BẢNG ĐIỀU KHIỂN ADMIN TOÀN NĂNG (GOD MODE)</h3>
+      <button onclick="closeModal('adminModal')">✖ Đóng</button>
+    </div>
+    <div class="nav-tabs" id="adminNav">
+      <button class="active" onclick="renderAdminTab('res', this)">1. Tài Nguyên & Cảnh Giới</button>
+      <button onclick="renderAdminTab('stats', this)">2. Chỉnh Toàn Bộ Chỉ Số</button>
+      <button onclick="renderAdminTab('forge', this)">3. Đúc Trang Bị & Đan Tùy Ý</button>
+      <button onclick="renderAdminTab('db', this)">4. Kho Dữ Liệu (Lấy Đồ Nhanh)</button>
+      <button onclick="renderAdminTab('unlock', this)">5. Mở Khóa & Buff Thần Cấp</button>
+    </div>
+    <div class="modal-body" id="adminBody"></div>
+  </div>
+</div>
+
+<!-- NPC INTERACTION MODAL -->
+<div class="modal-overlay" id="npcModal">
+  <div class="modal-content" style="max-width:440px;">
+    <div class="modal-header">
+      <h3 id="npcModalName" style="color:var(--cyan)">Tiên Hữu</h3>
+      <button onclick="closeModal('npcModal')">✖</button>
+    </div>
+    <div class="modal-body" id="npcModalBody"></div>
+  </div>
+</div>
+
+<script src="/game.js" defer></script>
+</body>
+</html>
