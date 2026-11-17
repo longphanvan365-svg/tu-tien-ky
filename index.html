@@ -52,7 +52,7 @@
     <label style="background:#263147; padding:4px 8px; border-radius:6px; cursor:pointer;" title="Chọn thư mục nhạc trên máy">
       📁 Nhạc Máy <input type="file" id="localMusicInput" webkitdirectory directory multiple accept="audio/*" style="display:none" onchange="loadLocalMusic(event)">
     </label>
-    <button id="btnAdminPanel" class="btn-red" style="display:none;" onclick="openAdmin()">⚙️ ADMIN TỐI CAO</button>
+    <button class="btn-red" onclick="openAdmin()">⚙️ ADMIN TỐI CAO</button>
   </div>
 </header>
 <audio id="bgAudio" onended="nextTrack()"></audio>

@@ -241,22 +241,6 @@ app.delete('/api/admin/users/:id', requireAuth, requireAdmin, (req, res) => {
 });
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
-// Middleware chặn truy cập trái phép vào trang quản trị /admin và /admin.html
-function guardAdminPage(req, res, next) {
-  if (!req.session || !req.session.userId) {
-    return res.redirect('/');
-  }
-  const user = db.prepare('SELECT role, is_locked FROM users WHERE id = ?').get(req.session.userId);
-  if (!user || user.is_locked || user.role !== 'admin') {
-    return res.redirect('/');
-  }
-  next();
-}
-
-app.get(['/admin', '/admin.html'], guardAdminPage, (_req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
 app.use(express.static(__dirname, { extensions: ['html'] }));
 app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
